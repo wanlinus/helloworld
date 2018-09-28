@@ -15,6 +15,6 @@ public class HomeController {
     }
     @GetMapping("a")
     public String dd(){
-        return "a OK";
+        return "a OKdsad";
     }
 }
