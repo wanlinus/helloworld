@@ -13,4 +13,8 @@ public class HomeController {
     public String sad() {
         return "OK";
     }
+    @GetMapping("a")
+    public String dd(){
+        return "a OK";
+    }
 }
