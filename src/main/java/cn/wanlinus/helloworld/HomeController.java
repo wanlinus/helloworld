@@ -15,7 +15,7 @@ public class HomeController {
 
     @GetMapping("")
     public String sad() {
-        return "OK";
+        return "OK" + System.currentTimeMillis();
     }
 
     @GetMapping("a")
