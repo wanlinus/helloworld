@@ -1,4 +1,4 @@
-FROM java
+FROM openjdk:8
 MAINTAINER wanlinus wanlinus@qq.com
 WORKDIR /docker
 COPY target/HelloWorld-0.0.1-SNAPSHOT.jar hello.jar
