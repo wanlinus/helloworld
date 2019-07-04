@@ -1,0 +1,12 @@
+version: "3"
+services:
+  hello:
+    image: hello:1
+    environment:
+    - BASE_URL='http://118.31.50.65'
+    - BASE_PORT='8080'
+    - AUTH='Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNTYwMTMyODIwLCJleHAiOjE1NjA3Mzc2MjB9.R7MqZpHrGCuQRLxZsoEfR-YjlGHhU98LA7OBhxzKswE'
+    - LDAP_PASSWORD='WiseCloudWiseCloudAD#2019'
+#    command:
+#      java -jar
+#      sh -c "while true;do echo hello docker;sleep 1;done"
