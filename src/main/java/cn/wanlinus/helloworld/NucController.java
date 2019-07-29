@@ -16,7 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author wanli
@@ -27,17 +30,18 @@ public class NucController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NucController.class);
     public static final int TOTAL_STAFF_ITEMS = 10000;
-    public static final int TOTAL_UNIT_ITEMS = 2000;
+    public static final int TOTAL_UNIT_ITEMS = 10000;
 
     @PostMapping("LoginApp/v1/login")
-    public NucResponse<NucLoginRes> login(NucLoginReq login, HttpServletRequest request) {
+    public NucResponse<NucLoginRes> login(@RequestBody NucLoginReq login, HttpServletRequest request) {
         LOGGER.info("LoginApp/v1/login - {}", JSON.toJSONString(login));
         LOGGER.info("LoginApp/v1/login request - {}", request.getHeader("Authorization"));
         LOGGER.info("LoginApp/v1/login CallerModule - {}", request.getHeader("CallerModule"));
 
         NucResponse<NucLoginRes> response = null;
 
-        if (new Random().nextInt(10) > 5) {
+        //password 123456
+        if ("刘旭辉1".equals(login.getAccountId()) && "7un/PdQaE9o=".equals(login.getPassword())) {
             response = new NucResponse<>(true, "success");
             NucLoginRes loginRes = new NucLoginRes("xiaom001", "小米",
                     "500167b0aedc27ac348ca6f93a70dcfc70859d88f6f1dcb080a2a8199e709773a893d9e86a6948ec27d6400b469c54a07a9a");
@@ -69,13 +73,19 @@ public class NucController {
     @PostMapping("/nuc-api/v1/listBusinessUnit")
     public NucResponseV2<NucPagation<NucBusinessUnitRes>> listBusinessUnit(@RequestBody NucBusinessUnitReq req) {
         LOGGER.debug("NucBusinessUnitReq - {}", JSON.toJSONString(req));
+        NucResponseV2<NucPagation<NucBusinessUnitRes>> responseV2 = new NucResponseV2<>("1", "success");
 
 
         int totalPage = (TOTAL_UNIT_ITEMS - 1) / req.getPageSize() + 1;
+        if (req.getCurrentPage() > totalPage) {
+            responseV2.setData(new NucPagation<>());
+            return responseV2;
+        }
+        LOGGER.debug("asd");
 
         int size;
         if (req.getCurrentPage() == totalPage) {
-            size = TOTAL_UNIT_ITEMS % req.getPageSize();
+            size = (TOTAL_UNIT_ITEMS - 1) % req.getPageSize() + 1;
         } else {
             size = req.getPageSize();
         }
@@ -97,7 +107,6 @@ public class NucController {
                 req.getCurrentPage() == totalPage, totalPage, req.getPageSize(), 1, 1, req.getCurrentPage(), list);
 
 
-        NucResponseV2<NucPagation<NucBusinessUnitRes>> responseV2 = new NucResponseV2<>("1", "success");
         responseV2.setData(pagation);
 
         return responseV2;
@@ -125,12 +134,17 @@ public class NucController {
 
 
         List<NucBuStaffRes> resList = new ArrayList<>();
-        LOGGER.debug("page size {}", req.getPageSize());
+
         int totalPage = (TOTAL_STAFF_ITEMS - 1) / req.getPageSize() + 1;
+        if (req.getCurrentPage() > totalPage) {
+            responseV2.setData(new NucPagation<>());
+            return responseV2;
+        }
+        LOGGER.debug("page size {} total page {}", req.getPageSize(), totalPage);
 
         int size;
         if (req.getCurrentPage() == totalPage) {
-            size = TOTAL_STAFF_ITEMS % req.getPageSize();
+            size = (TOTAL_STAFF_ITEMS - 1) % req.getPageSize() + 1;
         } else {
             size = req.getPageSize();
         }
@@ -139,7 +153,7 @@ public class NucController {
 
         for (int i = 0; i < size; i++) {
             Map<String, Object> map = new HashMap<>(4);
-            map.put("EMAIL", "test" + (i + size) + "@wise2c.com");
+            map.put("EMAIL", "test" + (i + (req.getCurrentPage() - 1) * req.getPageSize()) + "@wise2c.com");
             NucBuStaffRes res = new NucBuStaffRes("招商局金融科技有限公司", 648399600000L, "200000440", "M", "CMFT",
                     "a779ed92-0470-4bf3-a1ef-12cc5151ba47", 1499184000000L, list,
                     "liuxh00" + (i + (req.getCurrentPage() - 1) * req.getPageSize()),
